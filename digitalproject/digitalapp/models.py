@@ -10,7 +10,6 @@ class Product(models.Model):
     category = models.CharField(max_length=100, default="")
     subcategory = models.CharField(max_length=100, default="")
     price = models.IntegerField(default=0)
-
     publication_date = models.DateField()
 
     def __str__(self):
