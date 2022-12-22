@@ -58,6 +58,10 @@
 
           </li>
           <li>
+            <a class="nav-link scrollto" href="purchase">Purchase</a>
+
+          </li>
+          <li>
             <button
           type="button"
           class="btn btn-success"
@@ -820,32 +824,32 @@
           <div class="col-lg-4 col-md-6 mt-4 mt-md-0">
             <div class="box featured" data-aos="fade-up" data-aos-delay="200">
               <h3>{{product.0.category}} </h3>
-
+  
               <h4>
                 <span id="pricepr{{i.id}}"></span><sup>R</sup>{{i.price}}</span>
               </h4>
-
+  
               <h5 class="card-title" id="namepr{{i.id}}">
                 {{i.product_name}}
               </h5>
-
+  
               <p class="card-text">{{i.product_description|slice:"0:50"}}...</p>
-
+  
               <div class="btn-wrap">
-                <buttun class="btn-buy" id="pr{{i.id}}">Buy Now</button>
+                <buttun class="btn-buy" id="pr{{i.id}}">Purchase</button>
               </div>
             </div>
             <br>
             <hr><br>
-
+  
           </div>
-
+  
           {% endfor %}
-
+  
         </div>
-
+  
         {% endfor %}
-
+  
       </div>
     </section>
     <!-- End Pricing Section -->

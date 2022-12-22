@@ -1,7 +1,12 @@
 from math import ceil
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from digitalapp.models import Product
+from django.contrib import messages
 # Create your views here.
+
+
+def home(request):
+    return render(request, 'index.html')
 
 
 def purchase(request):
@@ -16,7 +21,7 @@ def purchase(request):
         nSlides = n // 4 + ceil((n / 4) - (n // 4))
         allProducts.append([prod, range(1, nSlides), nSlides])
     params = {'allProducts': allProducts}
-    return render(request, 'index.html', params)
+    return render(request, 'purchase.html', params)
 
 
 def checkout(request):
