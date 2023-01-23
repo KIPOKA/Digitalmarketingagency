@@ -3,5 +3,4 @@ from digitalapp import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('purchase', views.purchase, name='purchase'),
 ]

@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'paypal.standard.ipn',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -135,3 +136,8 @@ MESSAGES_TAGS = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+STRIPE_PUBLIC_KEY = 'pk_test_51MIBHSBDJFEKnZiZl86mpjHJem0uCJ41yXaFytJ7ceyjQRsZpeuobQwQSVK6cTHxgdsqmy5XJDiWNYPtZTfCiAoV00F2ReuAyd'
+
+STRIPE_PRIVATE_KEY = 'sk_test_51MIBHSBDJFEKnZiZUcLNFvl1bleUVtWwptZo9atsSic9RwVcxyAW8hNzCkH1rp6wXVL1XKr4gzgoBQoKKzI7Df0n00ZOAnFPnx'

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from digitalapp import views
 
 admin.site.site_header = "High Digital Marketing"
 admin.site.site_title = "Digital marketing site"
@@ -26,4 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('digitalapp.urls')),
     path('digitalauth/', include('digitalauth.urls')),
+    path('purchase', views.purchase, name='purchase'),
+
+    path('checkout', views.paid, name='paid'),
 ]
