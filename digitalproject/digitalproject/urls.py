@@ -27,7 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('digitalapp.urls')),
     path('digitalauth/', include('digitalauth.urls')),
-    path('purchase', views.purchase, name='purchase'),
-
-    path('checkout', views.paid, name='paid'),
+    path('purchase/', views.purchase, name='purchase'),
+    path('payment/', views.payment, name='payment'),
+    path('checkout', views.paid, name='checkout'),
 ]
