@@ -28,6 +28,7 @@ urlpatterns = [
     path('', include('digitalapp.urls')),
     path('digitalauth/', include('digitalauth.urls')),
     path('purchase/', views.purchase, name='purchase'),
-    path('payment/', views.payment, name='payment'),
     path('checkout', views.paid, name='checkout'),
+    path('complete/', views.complete, name="complete"),
+
 ]

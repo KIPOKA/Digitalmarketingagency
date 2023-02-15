@@ -1,14 +1,17 @@
 from math import ceil
 from django.shortcuts import redirect, render
-from digitalapp.models import Product, Orders, OrderUpdate
-from django.urls import reverse, reverse_lazy
-from django.contrib import messages
+from digitalapp.models import Product
+from django.urls import reverse
 import uuid
 from django.conf import settings
 import stripe
-from django.http.response import HttpResponse, JsonResponse
+
+from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView
+
+from .forms import OrderForm
+
+
 # Create your views here.
 
 
@@ -44,7 +47,7 @@ def paid(request):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://127.0.0.1:8000/payment',
+        success_url='http://127.0.0.1:8000/complete',
         cancel_url='http://127.0.0.1:8000/purchase',
         # success_url=request.build_absolute_uri(
         #    reverse('checkout')) + '?session_id={CHECKOUT_SESSION_ID}',
@@ -64,33 +67,12 @@ def paid(request):
     # return render(request, 'purchase', context)
 
 
-class ProductCreateView(CreateView):
-    model = Orders
-    fields = '__all__'
-    template_name = "digitalapp/payment.html"
-    success_url = reverse_lazy("home")
-
-# def checkout(request):
-#     if not request.user.is_authenticated:
-#         messages.warning(request, "Login & Try Again")
-#         return redirect('digitalauth/login')
-#     if request.method == "POST":
-
-#         company_name = request.POST['company_name']
-#         amount = request.POST.get('price')
-#         email = request.POST.get('email')
-#         subject = request.POST['subject']
-#         content = request.POST['content']
-#         phone = request.POST['phone']
-
-#         order = Orders.objects.create(company_name=company_name,
-#                                       amount=amount, email=email, subject=subject, content=content, phone=phone)
-#         order.save()
-
-#         return render(request, 'base.html')
-
-#     return render(request, 'base.html')
-
-
-def payment(request):
-    return render(request, 'payment.html')
+def complete(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            print("Done")
+            form.save()
+            return render(request, 'index.html', {'form': form})
+    form = OrderForm()
+    return render(request, 'form.html', {'form': form})
