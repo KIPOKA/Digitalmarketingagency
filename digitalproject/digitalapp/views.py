@@ -1,8 +1,6 @@
 from math import ceil
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from digitalapp.models import Product
-from django.urls import reverse
-import uuid
 from django.conf import settings
 import stripe
 
@@ -10,6 +8,7 @@ from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import OrderForm
+from django.contrib.sessions.backends.db import SessionStore
 
 
 # Create your views here.
@@ -32,6 +31,13 @@ def purchase(request):
         allProducts.append([prod, range(1, nSlides), nSlides])
     params = {'allProducts': allProducts}
     #context['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
+
+    session = SessionStore(request.session.session_key)
+    # assign the model instance to the session
+    session['Product'] = ['product_id', 'product_name',
+                          'product_descripton', 'category', 'price', 'amount_discount']
+    # save the session
+    session.save()
     return render(request, 'purchase.html', params)
 
 
@@ -39,6 +45,18 @@ def purchase(request):
 
 @csrf_exempt
 def paid(request):
+    session = SessionStore(request.session.session_key)
+    product_name = request.POST.get('product_name')
+    product_name = request.session['product_name']
+    price = request.session['price']
+    product_description = request.session['product_description']
+    category = request.session('category')
+
+    # request.session['product_name'] = product_name
+    # request.session['price'] = price
+    # request.session['product_description'] = product_description
+    # request.session['category'] = category
+
     stripe.api_key = settings.STRIPE_PRIVATE_KEY
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -68,11 +86,17 @@ def paid(request):
 
 
 def complete(request):
+
     if request.method == 'POST':
         form = OrderForm(request.POST)
+
         if form.is_valid():
+
+            # assign the model instance to the session
+
             print("Done")
             form.save()
             return render(request, 'index.html', {'form': form})
     form = OrderForm()
+    print('Not completed')
     return render(request, 'form.html', {'form': form})

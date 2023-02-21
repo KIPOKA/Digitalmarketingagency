@@ -4,6 +4,7 @@ from django.db import models
 
 
 class Product(models.Model):
+
     product_id = models.AutoField
     product_name = models.CharField(max_length=100)
     product_descripton = models.CharField(max_length=150, default="")
@@ -12,7 +13,7 @@ class Product(models.Model):
     price = models.IntegerField(default=0)
     amount_discount = models.IntegerField(default=0)
     is_discount = models.BooleanField(default=False)
-    publication_date = models.DateField()
+    created_at = models.DateTimeField()
 
     def discount(self):
         amount_discount = 0
@@ -25,12 +26,11 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-
+    #     product = models.ForeignKey(Product)
     name = models.CharField(max_length=90)
-    email = models.EmailField(max_length=90)
     subject_marketing = models.CharField(max_length=200, default="")
     content_marketing = models.TextField(max_length=200, default="")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.name
