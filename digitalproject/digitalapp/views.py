@@ -1,13 +1,17 @@
 from math import ceil
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from digitalapp.models import Product
-from django.urls import reverse
-from django.contrib import messages
-import uuid
 from django.conf import settings
 import stripe
-from django.http.response import HttpResponse, JsonResponse
+
+from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from .forms import OrderForm
+from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.
 
 
@@ -28,6 +32,13 @@ def purchase(request):
         allProducts.append([prod, range(1, nSlides), nSlides])
     params = {'allProducts': allProducts}
     #context['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
+
+    session = SessionStore(request.session.session_key)
+    # assign the model instance to the session
+    session['Product'] = ['product_id', 'product_name',
+                          'product_descripton', 'category', 'price', 'amount_discount']
+    # save the session
+    session.save()
     return render(request, 'purchase.html', params)
 
 
@@ -35,6 +46,7 @@ def purchase(request):
 
 @csrf_exempt
 def paid(request):
+
     stripe.api_key = settings.STRIPE_PRIVATE_KEY
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -43,7 +55,7 @@ def paid(request):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://127.0.0.1:8000/purchase',
+        success_url='http://127.0.0.1:8000/complete',
         cancel_url='http://127.0.0.1:8000/purchase',
         # success_url=request.build_absolute_uri(
         #    reverse('checkout')) + '?session_id={CHECKOUT_SESSION_ID}',
@@ -62,48 +74,20 @@ def paid(request):
     return JsonResponse({'sessionId': session.id})
     # return render(request, 'purchase', context)
 
-# def checkout(request):
-#     if not request.user.is_authenticated:
-#         messages.warning(request, "Login & Try Again")
-#         return redirect('digitalauth/login')
-#     if request.method == "POST":
 
-#         items_json = request.POST.get('itemsJson', '')
-#         name = request.POST.get('name', '')
-#         amount = request.POST.get('amt')
-#         email = request.POST.get('email', '')
-#         address1 = request.POST.get('address1', '')
-#         address2 = request.POST.get('address2', '')
-#         city = request.POST.get('city', '')
-#         state = request.POST.get('state', '')
-#         zip_code = request.POST.get('zip_code', '')
-#         phone = request.POST.get('phone', '')
+@login_required
+def complete(request):
 
-#         Order = Orders(items_json=items_json, name=name, amount=amount, email=email, address1=address1,
-#                        address2=address2, city=city, state=state, zip_code=zip_code, phone=phone)
-#         print(amount)
-#         Order.save()
-#         update = OrderUpdate(order_id=Order.order_id,
-#                              update_desc="the order has been placed")
-#         update.save()
-#         thank = True
-#         id = Order.order_id
-#         oid = str(id)
-#         oid = str(id)
-#         param_dict = {
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            print("Done")
+            form.save()
+            return render(request, 'index.html', {'form': form})
+    form = OrderForm()
+    print('Not completed')
+    return render(request, 'form.html', {'form': form})
 
-#             'MID': 'add ur merchant id',
-#             'ORDER_ID': oid,
-#             'TXN_AMOUNT': str(amount),
-#             'CUST_ID': email,
-#             'INDUSTRY_TYPE_ID': 'Retail',
-#             'WEBSITE': 'WEBSTAGING',
-#             'CHANNEL_ID': 'WEB',
-#             'CALLBACK_URL': 'http://127.0.0.1:8000/handlerequest/',
 
-#         }
-#         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(
-#             param_dict, MERCHANT_KEY)
-#         return render(request, 'paytm.html', {'param_dict': param_dict})
-
-#     return render(request, 'checkout.html')
+def handling_404(request, exception):
+    return render(request, '404.html', {})

@@ -27,7 +27,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('digitalapp.urls')),
     path('digitalauth/', include('digitalauth.urls')),
-    path('purchase', views.purchase, name='purchase'),
+    path('purchase/', views.purchase, name='purchase'),
+    path('checkout', views.paid, name='checkout'),
+    path('complete/', views.complete, name="complete"),
 
-    path('checkout', views.paid, name='paid'),
 ]
+handler404 = 'digitalapp.views.handling_404'
