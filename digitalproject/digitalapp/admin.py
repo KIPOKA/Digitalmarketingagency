@@ -6,9 +6,9 @@ from .models import Product, Order
 class ProductAdminSite(admin.ModelAdmin):
     model = Product
 
-    fields = ['product_name', 'product_descripton', 'category', 'price', 'amount_discount',
+    fields = ['product_name', 'product_description', 'category', 'price', 'amount_discount',
               'is_discount', 'created_at']
-    list_display = ('product_name', 'product_descripton', 'category', 'price', 'amount_discount',
+    list_display = ('product_name', 'product_description', 'category', 'price', 'amount_discount',
                     'is_discount', 'created_at'
                     )
 

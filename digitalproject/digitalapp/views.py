@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .forms import OrderForm
 from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -45,17 +46,6 @@ def purchase(request):
 
 @csrf_exempt
 def paid(request):
-    session = SessionStore(request.session.session_key)
-    product_name = request.POST.get('product_name')
-    product_name = request.session['product_name']
-    price = request.session['price']
-    product_description = request.session['product_description']
-    category = request.session('category')
-
-    # request.session['product_name'] = product_name
-    # request.session['price'] = price
-    # request.session['product_description'] = product_description
-    # request.session['category'] = category
 
     stripe.api_key = settings.STRIPE_PRIVATE_KEY
     session = stripe.checkout.Session.create(
@@ -85,18 +75,19 @@ def paid(request):
     # return render(request, 'purchase', context)
 
 
+@login_required
 def complete(request):
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
-
         if form.is_valid():
-
-            # assign the model instance to the session
-
             print("Done")
             form.save()
             return render(request, 'index.html', {'form': form})
     form = OrderForm()
     print('Not completed')
     return render(request, 'form.html', {'form': form})
+
+
+def handling_404(request, exception):
+    return render(request, '404.html', {})

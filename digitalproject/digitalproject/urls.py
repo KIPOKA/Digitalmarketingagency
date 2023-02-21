@@ -32,3 +32,4 @@ urlpatterns = [
     path('complete/', views.complete, name="complete"),
 
 ]
+handler404 = 'digitalapp.views.handling_404'
